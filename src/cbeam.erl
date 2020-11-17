@@ -1,6 +1,26 @@
 -module(cbeam).
 
+-export([main/0, main/1]).
 -export([run/1, run/2, list_dirs/1, list_dirs_beam/1, mkdir/1]).
+
+%% @doc For running with:
+%% erl +sbtu +A1 -noinput -mode minimal -boot start_clean -s rebar3 main -extra "$@"
+-spec main() -> no_return().
+main() ->
+    List = init:get_plain_arguments(),
+    main(List).
+
+main([BeamFile]) ->
+    Content = run(BeamFile),
+    io:format(Content);
+main([EbinDir, OutErlDir]) ->
+    run(EbinDir, OutErlDir);
+main(_) ->
+    io:format("\ncbeam is a tool for working with Erlang projects.\n\n\n"),
+    io:format("Usage: ~n"),
+    io:format("~-50s~s~n", ["cbeam InEbinDir OutErlDir", "Decode all beam to OutErlDir"]),
+    io:format("~-50s~s~n", ["cbeam BeamFile", "Show erl on shell"]),
+    ok.
 
 %% 反编译mod.beam为erl
 run(Mod) when is_atom(Mod) ->
