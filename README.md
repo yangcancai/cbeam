@@ -6,7 +6,10 @@ An OTP application
 Build
 -----
 
-    $ rebar3 compile
+    # for erlang
+    $ rebar3 escriptize
+    # for elixir
+    $ mix escript.build
 
 ## How to Use
 
