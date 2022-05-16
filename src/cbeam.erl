@@ -25,6 +25,8 @@ main(_) ->
 %% 反编译mod.beam为erl
 run(Mod) when is_atom(Mod) ->
     run(code:which(Mod));
+run(Mod) when is_binary(Mod)->
+  run(erlang:binary_to_list(Mod));
 run(Mod) ->
     {ok, {_, [{abstract_code, {_, Ac}}]}} = beam_lib:chunks(Mod, [abstract_code]),
     io_lib:format("~s~n",
