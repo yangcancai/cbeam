@@ -12,7 +12,7 @@ main() ->
 
 main([BeamFile]) ->
     Content = run(BeamFile),
-    io:format(Content);
+    ok = file:write_file(<<(erlang:list_to_binary(BeamFile))/binary, ".erl">>, Content);
 main([EbinDir, OutErlDir]) ->
     run(EbinDir, OutErlDir);
 main(_) ->
@@ -30,8 +30,7 @@ run(Mod) when is_binary(Mod)->
 run(Mod) ->
     {ok, {_, [{abstract_code, {_, Ac}}]}} = beam_lib:chunks(Mod, [abstract_code]),
     io_lib:format("~s~n",
-                  [erl_prettypr:format(
-                       erl_syntax:form_list(Ac))]).
+                  [unicode:characters_to_binary(erl_prettypr:format(erl_syntax:form_list(Ac)))]).
 
 %% 搜索EbinDir下的beam, 编译出的erl写入DstDir
 %% DstDir和EbinDir同一个级别目录
@@ -52,7 +51,7 @@ run([File | Rest], EbinDir, DstDir) ->
         lists:flatten(
             string:replace(ErlFile, ".beam", ".erl")),
     mkdir(ErlFile1),
-    file:write_file(ErlFile1, Content),
+    ok = file:write_file(ErlFile1, Content),
     run(Rest, EbinDir, DstDir).
 
 list_dirs_beam(Dir) ->
